@@ -1,5 +1,6 @@
 #include<iostream>
 #include<bits/stdc++.h>
+// problem link --> https://codeforces.com/problemset/problem/1472/B
 using namespace std;
 
 // Recurisive approach 
