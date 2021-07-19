@@ -1,85 +1,112 @@
-// sum values in range and update 
+//SATYAM SINGH  
 #include<iostream>
 #include<bits/stdc++.h>
-
 using namespace std;
 
-// making of segment tree (1 based index )
+#define ll                 long long int
+#define pb                 push_back
+#define mod                     1000000007
+#define inf                     1e18
+#define ump                unordered_map
+#define mp                 make_pair
+#define all(v)                   v.begin(),v.end()
 
-void build_segment(vector<int>&array,vector<int>&segment,int low,int high,int mid1) {
-    // when range values are equal (leaf node )
-    // update the segment tree values 
-    if(low==high) {
-        segment[mid1]=array[low];
+#define  inpv(v,n)  for(int i=0;i<n;i++) cin>>v[i]
+#define  outv(v)    for(auto i:v) cout<<i<<' ' 
+#define  loop(i,a,b)  for(int i=(a);i<(b);i++)
+#define  looprev(i,a,b)  for(int i=(a);i>=0;i--)
+#define log(args...)  {string _s = #args ;replace(_s.begin(),_s.end(),',',' ') ; stringstream _ss(_s); istream_iterator<string> _it(_ss) ; err(_it,args);}
+void err(istream_iterator<string> it) {}
+template<typename T,typename ... Args>
+void err(istream_iterator<string> it, T a,Args... args) {
+      cout<<*it<<" = "<<a<<endl;
+   err(++it,args...);
+}
+
+void file_i_o()
+{
+    #ifndef ONLINE_JUDGE
+        freopen("input.txt", "r", stdin);
+        freopen("output.txt", "w", stdout);
+    #endif
+}
+
+void BuildSegment(vector<int>&segment,vector<int>&v,int low,int high,int ind) {
+    if(low == high) {
+        segment[ind] = v[low];
         return ;
     }
-    // calculate the mid value 
-    int m=(low+high)/2;
-    // Traverse the left part of the tree 
-    build_segment(array,segment,low,m,2*mid1);
-    // traverse the right part of the tree 
-    build_segment(array,segment,m+1,high,2*mid1+1);
-    //  while coming back add thode two values and return back 
-    segment[mid1]=segment[2*mid1]+segment[2*mid1+1];
+
+    // find the mid 
+    int mid = (low+high)/2;
+    // update left part 
+    BuildSegment(segment,v,low,mid,2*ind+1);
+
+    // update right part
+    BuildSegment(segment,v,mid+1,high,2*ind+2);
+    segment[ind] = segment[2*ind+1] + segment[2*ind+2];
 }
 
-// updating the value of segment 
-void update(vector<int>&array,vector<int>&segment,int low,int high,int mid1,int ind,int val) {
 
-    // when leaf node condition comes update the value in the original array and in the segment tree 
-    if(low==high) {
-        array[ind]=val;
-        segment[mid1]=val;
+
+int Query(vector<int>&segment,int low,int high,int ind,int i,int j) {
+    if(low > j or high < i) return 0;
+    if(low>=i and high <=j) return segment[ind];
+    int mid = (low +high)/2;
+    int left = Query(segment,low,mid,2*ind+1,i,j);
+    int right = Query(segment,mid+1,high,2*ind+2,i,j);
+
+    return left+right;
+}
+
+void Update(vector<int>&segment,vector<int>&v,int low,int high,int ind,int i,int val) {
+    if(low == high) {
+        v[i] = val;
+        segment[ind] = val;
         return ;
     }
 
-    // calculate mid 
-    int m=(low+high)/2;
-    // if index is greater than move to right part of the tree 
-    if(ind>m) {
-        update(array,segment,m+1,high,2*mid1+1,ind,val);
+    int mid = (low+high)/2;
+    if(i>mid) {
+        Update(segment,v,mid+1,high,2*ind+2,i,val);
+    } else {
+        Update(segment,v,low,mid,2*ind+1,i,val);
     }
-    // else move to left part of the tree 
-    else{
-        update(array,segment,low,m,2*mid1,ind,val);
-    }
-    // while coming back update the values 
-    segment[mid1]=segment[2*mid1]+segment[2*mid1+1];
+
+    segment[ind] = segment[2*ind+1] + segment[2*ind+2];
 }
 
-// function for queries 
-int query(vector<int>&segment,int low,int high,int mid1,int left,int right ) {
-    //  if we exceed the segment tree return ans 0
-    if(low>right or high<left) {
-        return 0;
+
+int main( ) {
+    clock_t begin = clock();
+    file_i_o();
+    // Write your code here....
+    vector<int>v{1,3,5,7,9,11};
+    vector<int>segment(4*v.size());
+    BuildSegment(segment,v,0,v.size()-1,0);
+    // outv(segment);
+    int q;
+    cin>>q;
+    while(q--) {
+        int x;
+        cin>>x;
+        if(x == 1) {
+            int i,j;
+            cin>>i>>j;
+            // log(i,j);
+            cout<<Query(segment,0,v.size()-1,0,i,j)<<endl;
+        } else {
+            int i,y;
+            cin>>i>>y;
+            Update(segment,v,0,v.size()-1,0,i,y);
+        }
     }
-    // when we hit any bounday condition similar to the range then return that value 
-    if(low>=left and high<=right) {
-        return segment[mid1];
-    }
-    // calculate the mid 
-    int m=(low+high)/2;
+     
 
-    // get values from left part of the tree 
-    int a1=query(segment,low,m,2*mid1,left,right);
-    // get from right part 
-    int a2=query(segment,m+1,high,2*mid1+1,left,right);
-
-    // add them and return the ans 
-    return a1+a2;
-}
-int main() {
-    vector<int>v={1,3,5,7,9,11};
-    vector<int>segment(4*v.size(),0);
-    // builde the segment tree 
-    build_segment(v,segment,0,v.size()-1,1);
-
-    // sum of value in range (1,4);
-    cout<<query(segment,0,v.size()-1,1,1,3);
-    
-    // update the value
-    update(v,segment,0,v.size()-1,1,1,10);
-
-    // print the updated sum  value again 
-    cout<<query(segment,0,v.size()-1,1,1,3);
+    // code ends here !!!!!! 
+    #ifndef ONLINE_JUDGE 
+      clock_t end = clock();
+      cout<<"\n\nExecuted In: "<<double(end - begin) / CLOCKS_PER_SEC*100<<" seconds";
+    #endif 
+    return 0;
 }

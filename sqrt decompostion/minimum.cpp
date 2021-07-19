@@ -1,6 +1,5 @@
 //SATYAM SINGH  
-// problem -->  find minimum in range and answer queries
-// sqrt decompositon basic problem 
+// problem link -- > https://www.hackerrank.com/challenges/service-lane/problem
 #include<iostream>
 #include<bits/stdc++.h>
 using namespace std;
@@ -38,33 +37,30 @@ int main( ) {
     clock_t begin = clock();
     file_i_o();
     // Write your code here....
-    int n,q;
-    cin>>n>>q;
+    int n,t;
+    cin>>n>>t;
     vector<int>v(n);
     inpv(v,n);
     int sq = ceil(sqrt(n));
-    vector<int>sqarr(sq,INT_MAX);
-    
+    vector<int>dp(sq,INT_MAX);
     for(int i=0;i<n;i++) {
-        sqarr[i/sq] = min(sqarr[i/sq],v[i]);
+    	dp[i/sq] = min(dp[i/sq],v[i]);
     }
-
-    while(q--) {
-        int l,r;
-        cin>>l>>r;
-        int ans = INT_MAX;
-        for(int i=l;i<=r;) {
-            if(i%sq == 0 and i+sq-1 <=r) {
-                ans = min(ans,sqarr[i/sq]);
-                i+=sq;
-            } else {
-                ans = min(ans,v[i]);
-                i++;
-            }
-        }
-        cout<<ans<<endl;
+    while(t--) {
+    	int a,b;
+    	cin>>a>>b;
+    	int mx = INT_MAX;
+    	for(int i=a;i<=b;) {
+    		if(i%sq == 0 and i+sq-1<=b) {
+    			mx = min(mx,dp[i/sq]);
+    			i+=sq;
+    		} else {
+    			mx = min(mx,v[i]);
+    			i++;
+    		}
+    	}
+    	cout<<mx<<endl;
     }
-    
      
 
     // code ends here !!!!!! 
