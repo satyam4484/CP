@@ -25,7 +25,7 @@ void casepermutation(string input,string ouput) {
         casepermutation(subs,ouput+input[0]);
     }
     
-}
+}   
 int main(){
     string inp="1a2b";
     string out="";
