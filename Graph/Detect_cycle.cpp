@@ -66,26 +66,24 @@ class Graph {
 
     // Detect cycle in undirected graph 
 
-    bool undirectedgraph(int src,ump<int,int>visited) {
-        if(visited[src] == 2) return true;
-        visited[src] = 1;
-        for(auto neighbour:this->adj[src]) {
-            if(visited[neighbour] == 1) visited[neighbour] = 2;
-            else {
-                if(undirectedgraph(neighbour,visited)) return true;
+    bool undirectedgraph(int src,vector<bool>&visited,int par) {
+       visited[src] = true;
+        
+        for(auto i:this->adj[src]){
+            if(visited[i] and i!=par) return true;
+            else if(not visited[i]){
+                if(undirectedgraph(i,visited,src)) return true;
             }
         }
         return false;
     }
     
     bool undirected() {
-        ump<int,int>visited;
+        vector<bool>visited(this->V,false);
         for(int i=0;i<this->V;i++){
-            visited[i] = 1;
-            for(auto j:this->adj[i]){
-                if(undirectedgraph(j,visited)) return true;
-            }
-            visited[i] = 0;
+           if(not visited[i]) {
+               if(undirectedgraph(i,visited,-1)) return true;
+           }
         }
         return false;
     }
