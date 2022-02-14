@@ -10,6 +10,7 @@ https://leetcode.com/problems/maximum-depth-of-binary-tree/
  *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
  * };
  */
+
 class Solution {
 public:
     int maxDepth(TreeNode* root) {
